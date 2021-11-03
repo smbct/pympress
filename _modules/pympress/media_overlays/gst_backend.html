@@ -129,16 +129,13 @@
     <span class="c1">#: A :class:`~Gst.Playbin` to be play videos</span>
     <span class="n">playbin</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: `str` holding the path to the current file</span>
-    <span class="n">uri</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GstOverlay</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
         <span class="c1"># Create GStreamer playbin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span> <span class="o">=</span> <span class="n">Gst</span><span class="o">.</span><span class="n">ElementFactory</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;playbin&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sink</span> <span class="o">=</span> <span class="n">Gst</span><span class="o">.</span><span class="n">ElementFactory</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gtksink&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;video-sink&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GstOverlay</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">media_overlay</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">movie_zone</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">media_overlay</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="o">.</span><span class="n">props</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>  <span class="mi">0</span><span class="p">)</span>
@@ -170,7 +167,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filepath (`pathlib.Path`): The path to the media file path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">as_uri</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;uri&#39;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">.</span><span class="n">as_uri</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">READY</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GstOverlay.mute"><a class="viewcode-back" href="../../../pympress.html#pympress.media_overlays.gst_backend.GstOverlay.mute">[docs]</a>    <span class="k">def</span> <span class="nf">mute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -214,7 +212,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            `bool`: `True` iff this function should be run again (:func:`~GLib.idle_add` convention)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;uri&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">PLAYING</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">False</span></div>
@@ -237,6 +234,7 @@
         <span class="sd">&quot;&quot;&quot; Stops playing in the backend player.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">NULL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playbin</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">READY</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
