@@ -167,7 +167,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pympress.app.Pympress.do_activate">
-<span class="sig-name descname"><span class="pre">do_activate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1636390291.833267</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pympress/app.html#Pympress.do_activate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pympress.app.Pympress.do_activate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">do_activate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1636414689.013238</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pympress/app.html#Pympress.do_activate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pympress.app.Pympress.do_activate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Activate: show UI windows.</p>
 <p>Build them if they do not exist, otherwise bring to front.</p>
 </dd></dl>
@@ -3573,7 +3573,7 @@ clicking while ctrl pressed.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pympress.pointer.Pointer.pointer">
-<span class="sig-name descname"><span class="pre">pointer</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;GdkPixbuf.Pixbuf</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f31f26afb40</span> <span class="pre">(GdkPixbuf</span> <span class="pre">at</span> <span class="pre">0x55eccbb569e0)&gt;</span></em><a class="headerlink" href="#pympress.pointer.Pointer.pointer" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pointer</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;GdkPixbuf.Pixbuf</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f37d74e90c0</span> <span class="pre">(GdkPixbuf</span> <span class="pre">at</span> <span class="pre">0x55e1013ab9e0)&gt;</span></em><a class="headerlink" href="#pympress.pointer.Pointer.pointer" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference external" href="https://lazka.github.io/pgi-docs/GdkPixbuf-2.0/classes/Pixbuf.html#GdkPixbuf.Pixbuf" title="(in GdkPixbuf 2.0 v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pixbuf</span></code></a> to read XML descriptions of GUIs and load them.</p>
 </dd></dl>
 
@@ -4606,7 +4606,7 @@ of all the resizeable items (if and only if resizeable).</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pympress.config.Config.widget_reqs">
-<span class="sig-name descname"><span class="pre">widget_reqs</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'highlight':</span> <span class="pre">({'highlight'},</span> <span class="pre">{'current',</span> <span class="pre">'notes',</span> <span class="pre">'next',</span> <span class="pre">'annotations'}),</span> <span class="pre">'note_pages':</span> <span class="pre">({'notes',</span> <span class="pre">'next',</span> <span class="pre">'annotations'},),</span> <span class="pre">'notes':</span> <span class="pre">({'current',</span> <span class="pre">'notes',</span> <span class="pre">'next'},</span> <span class="pre">{'annotations'}),</span> <span class="pre">'plain':</span> <span class="pre">({'current',</span> <span class="pre">'next',</span> <span class="pre">'annotations'},)}</span></em><a class="headerlink" href="#pympress.config.Config.widget_reqs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">widget_reqs</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'highlight':</span> <span class="pre">({'highlight'},</span> <span class="pre">{'current',</span> <span class="pre">'notes',</span> <span class="pre">'annotations',</span> <span class="pre">'next'}),</span> <span class="pre">'note_pages':</span> <span class="pre">({'notes',</span> <span class="pre">'annotations',</span> <span class="pre">'next'},),</span> <span class="pre">'notes':</span> <span class="pre">({'current',</span> <span class="pre">'notes',</span> <span class="pre">'next'},</span> <span class="pre">{'annotations'}),</span> <span class="pre">'plain':</span> <span class="pre">({'current',</span> <span class="pre">'annotations',</span> <span class="pre">'next'},)}</span></em><a class="headerlink" href="#pympress.config.Config.widget_reqs" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> mapping layout ids to tuples of their expected and optional widgets</p>
 </dd></dl>
 
@@ -5670,21 +5670,6 @@ A default backend is marked by an empty list.</p>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pympress.media_overlays.base.get_window_handle">
-<span class="sig-prename descclassname"><span class="pre">pympress.media_overlays.base.</span></span><span class="sig-name descname"><span class="pre">get_window_handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pympress/media_overlays/base.html#get_window_handle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pympress.media_overlays.base.get_window_handle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uses ctypes to call gdk_win32_window_get_handle which is not available in python gobject introspection porting.</p>
-<p>Solution from <a class="reference external" href="http://stackoverflow.com/a/27236258/1387346">http://stackoverflow.com/a/27236258/1387346</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>window</strong> (<a class="reference external" href="https://lazka.github.io/pgi-docs/Gdk-3.0/classes/Window.html#Gdk.Window" title="(in Gdk 3.0 v3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a>) – The window for which we want to get the handle</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The handle to the win32 window</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>

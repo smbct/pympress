@@ -115,36 +115,11 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">ctypes</span>
-
 <span class="kn">import</span> <span class="nn">gi</span>
 <span class="n">gi</span><span class="o">.</span><span class="n">require_version</span><span class="p">(</span><span class="s1">&#39;Gtk&#39;</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">gi.repository</span> <span class="kn">import</span> <span class="n">GLib</span>
 
 <span class="kn">from</span> <span class="nn">pympress</span> <span class="kn">import</span> <span class="n">builder</span>
-
-
-<div class="viewcode-block" id="get_window_handle"><a class="viewcode-back" href="../../../pympress.html#pympress.media_overlays.base.get_window_handle">[docs]</a><span class="k">def</span> <span class="nf">get_window_handle</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Uses ctypes to call gdk_win32_window_get_handle which is not available in python gobject introspection porting.</span>
-
-<span class="sd">    Solution from http://stackoverflow.com/a/27236258/1387346</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        window (:class:`~Gdk.Window`): The window for which we want to get the handle</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The handle to the win32 window</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># get the c gpointer of the gdk window</span>
-    <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_GetPointer</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span>
-    <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_GetPointer</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ctypes</span><span class="o">.</span><span class="n">py_object</span><span class="p">]</span>
-    <span class="n">drawingarea_gpointer</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">__gpointer__</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="c1"># get the win32 handle</span>
-    <span class="n">gdkdll</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="s1">&#39;libgdk-3-0.dll&#39;</span><span class="p">)</span>
-    <span class="n">handle_getter</span> <span class="o">=</span> <span class="n">gdkdll</span><span class="o">.</span><span class="n">gdk_win32_window_get_handle</span>
-    <span class="n">handle_getter</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span>
-    <span class="n">handle_getter</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">handle_getter</span><span class="p">(</span><span class="n">drawingarea_gpointer</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VideoOverlay"><a class="viewcode-back" href="../../../pympress.html#pympress.media_overlays.base.VideoOverlay">[docs]</a><span class="k">class</span> <span class="nc">VideoOverlay</span><span class="p">(</span><span class="n">builder</span><span class="o">.</span><span class="n">Builder</span><span class="p">):</span>
