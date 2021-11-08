@@ -487,6 +487,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_backends</span><span class="p">[</span><span class="s1">&#39;gst&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GstOverlay</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;gst&#39;</span><span class="p">,</span> <span class="s1">&#39;enabled&#39;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">types_list</span><span class="p">[</span><span class="s1">&#39;gst&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s1">&#39;gst&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_types&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gst_version</span> <span class="o">+=</span> <span class="s1">&#39; (disabled)&#39;</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">gst_version</span> <span class="o">=</span> <span class="s1">&#39;GStreamer not available&#39;</span>
@@ -501,6 +503,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_backends</span><span class="p">[</span><span class="s1">&#39;vlc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VlcOverlay</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;vlc&#39;</span><span class="p">,</span> <span class="s1">&#39;enabled&#39;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">types_list</span><span class="p">[</span><span class="s1">&#39;vlc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s1">&#39;vlc&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_types&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vlc_version</span> <span class="o">+=</span> <span class="s1">&#39; (disabled)&#39;</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">vlc_version</span> <span class="o">=</span> <span class="s1">&#39;VLC not available&#39;</span>
