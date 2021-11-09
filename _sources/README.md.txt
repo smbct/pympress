@@ -317,20 +317,15 @@ If you want to add or contribute to a translation, check [pympress’ page on PO
 [@polaksta](https://github.com/polaksta),
 [@susobaco](https://github.com/susobaco),
 Agnieszka,
-Alexandre Almeida,
-Dongwang,
 Ferdinand Fichtner,
 [FriedrichFröbel](https://github.com/FriedrichFroebel),
-He. yifan. xs,
 [Jaroslav Svoboda](https://github.com/multiflexi),
 Jeertmans,
 Kristýna,
 Lorenzo. pacchiardi,
 Luis Sibaja,
 Nico,
-Ogawa,
 Saulpierotti,
-Tkoyama010,
 and <!-- last translator --> Cimbali.
 
 ## Packages
