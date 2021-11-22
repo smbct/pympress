@@ -143,6 +143,13 @@
 <span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="s1">&#39;pympress&#39;</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">get_locale_dir</span><span class="p">())</span>
 
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># python &lt;3.6 does not have this</span>
+    <span class="ne">ModuleNotFoundError</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="ne">ModuleNotFoundError</span> <span class="o">=</span> <span class="ne">ImportError</span>
+
+
 <span class="c1"># Load python bindings for gobject introspections, aka pygobject, aka gi, and pycairo.</span>
 <span class="c1"># These are dependencies that are not specified in the setup.py, so we need to start here.</span>
 <span class="c1"># They are not specified because:</span>
