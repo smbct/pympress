@@ -316,6 +316,7 @@ If you want to add or contribute to a translation, check [pympress’ page on PO
 [@Vulpeculus](https://github.com/Vulpeculus),
 [@polaksta](https://github.com/polaksta),
 [@susobaco](https://github.com/susobaco),
+[@Morfit](https://github.com/Morfit),
 Agnieszka,
 Ferdinand Fichtner,
 Frederik. blome,
