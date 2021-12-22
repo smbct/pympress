@@ -367,6 +367,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">shortcut_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">shortcuts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;highlight-hold-erase&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># Not really an action but we define a shortcut for it</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">set_accels_for_action</span><span class="p">(</span><span class="s1">&#39;app.&#39;</span> <span class="o">+</span> <span class="n">action</span><span class="p">,</span> <span class="n">shortcut_list</span><span class="p">)</span>
 
         <span class="c1"># Common to both windows</span>
@@ -1215,7 +1217,8 @@
             <span class="k">return</span>
 
         <span class="c1"># Remove scribbles and scribbling/zooming modes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scribbler</span><span class="o">.</span><span class="n">disable_scribbling</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scribbler</span><span class="o">.</span><span class="n">page_change_exits</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scribbler</span><span class="o">.</span><span class="n">disable_scribbling</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scribbler</span><span class="o">.</span><span class="n">page_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preview_page</span><span class="p">,</span> <span class="n">page_preview</span><span class="o">.</span><span class="n">label</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="o">.</span><span class="n">stop_zooming</span><span class="p">()</span>
 
@@ -1337,28 +1340,6 @@
     <span class="c1">############################     User inputs      ############################</span>
     <span class="c1">##############################################################################</span>
 
-<div class="viewcode-block" id="UI.on_navigation"><a class="viewcode-back" href="../../pympress.html#pympress.ui.UI.on_navigation">[docs]</a>    <span class="k">def</span> <span class="nf">on_navigation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Manage key presses for both windows.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            widget (:class:`~Gtk.Widget`):  the widget in which the event occurred (ignored)</span>
-<span class="sd">            event (:class:`~Gdk.Event`):  the event that occurred</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `bool`: whether the event was consumed</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_PRESS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="c1"># Try passing events to special-behaviour widgets (spinner, ett, zooming, scribbler) in case they are enabled</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_number</span><span class="o">.</span><span class="n">on_keypress</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">est_time</span><span class="o">.</span><span class="n">on_keypress</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-
-        <span class="k">return</span> <span class="kc">False</span></div>
-
-
 <div class="viewcode-block" id="UI.validate_current_input"><a class="viewcode-back" href="../../pympress.html#pympress.ui.UI.validate_current_input">[docs]</a>    <span class="k">def</span> <span class="nf">validate_current_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gaction</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handle the action validating the input, if applicable.</span>
 
@@ -1382,6 +1363,8 @@
 <span class="sd">            event (:class:`~Gdk.Event`):  the GTK event, which contains the key stroke details</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">key_event</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">scribbler</span><span class="o">.</span><span class="n">key_event</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span></div>

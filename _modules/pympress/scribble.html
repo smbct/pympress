@@ -207,6 +207,14 @@
 
     <span class="c1">#: `int` that is the currently selected element</span>
     <span class="n">active_preset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1">#: `int` to remember the previously selected element, before holding “eraser”</span>
+    <span class="n">previous_preset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1">#: `list` that contains the modifiers which, when held on scribble start, toggle the eraser</span>
+    <span class="n">toggle_erase_modifiers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1">#: `list` that contains the non-modifier shortcuts which, when held on scribble start, toggle the eraser</span>
+    <span class="n">toggle_erase_shortcuts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1">#: `str` or `None` that indicates whether a modifier + click or a held shortcut is toggling the eraser</span>
+    <span class="n">toggle_erase_source</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1">#: The :class:`~Gio.Action` that contains the currently selected pen</span>
     <span class="n">pen_action</span> <span class="o">=</span> <span class="kc">None</span>
@@ -217,6 +225,8 @@
     <span class="c1"># per-page means we manage a set of scribbles per document page, and clear or restore them on page change</span>
     <span class="c1"># per-label means we manage a set of scribbles per document page, but defined by label and not page number</span>
     <span class="n">highlight_mode</span> <span class="o">=</span> <span class="s1">&#39;single-page&#39;</span>
+    <span class="c1">#: `bool` indicating whether we exit highlighting mode on page change</span>
+    <span class="n">page_change_exits</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="c1">#: `dict` of scribbles per page</span>
     <span class="n">remembered_scribbles</span> <span class="o">=</span> <span class="p">{}</span>
@@ -275,6 +285,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adjust_tools_orientation</span><span class="p">()</span>
 
         <span class="n">active_pen</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="s1">&#39;active_pen&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_change_exits</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="s1">&#39;page_change_exits&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup_actions</span><span class="p">({</span>
             <span class="s1">&#39;highlight&#39;</span><span class="p">:</span>         <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">switch_scribbling</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="s1">&#39;highlight-use-pen&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load_preset</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">active_pen</span><span class="p">,</span> <span class="n">parameter_type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -282,14 +293,32 @@
             <span class="s1">&#39;highlight-redo&#39;</span><span class="p">:</span>    <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">redo_scribble</span><span class="p">),</span>
             <span class="s1">&#39;highlight-undo&#39;</span><span class="p">:</span>    <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_scribble</span><span class="p">),</span>
             <span class="s1">&#39;highlight-mode&#39;</span><span class="p">:</span>    <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">highlight_mode</span><span class="p">,</span> <span class="n">parameter_type</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span>
+            <span class="s1">&#39;highlight-page-exit&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_change_action</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_change_exits</span><span class="p">),</span>
             <span class="s1">&#39;highlight-tools-orientation&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">set_tools_orientation</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tools_orientation</span><span class="p">,</span>
                                                 <span class="n">parameter_type</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span>
         <span class="p">})</span>
 
+        <span class="n">parsed_eraser_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">Gtk</span><span class="o">.</span><span class="n">accelerator_parse</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="k">for</span> <span class="n">keys</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">shortcuts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;highlight-hold-erase&#39;</span><span class="p">,</span> <span class="p">[])]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_modifiers</span> <span class="o">=</span> <span class="p">[</span><span class="n">mod</span> <span class="k">for</span> <span class="n">keycode</span><span class="p">,</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">parsed_eraser_keys</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">keycode</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_shortcuts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">keycode</span><span class="p">,</span> <span class="n">mod</span><span class="p">)</span> <span class="k">for</span> <span class="n">keycode</span><span class="p">,</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">parsed_eraser_keys</span> <span class="k">if</span> <span class="n">keycode</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pen_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_application</span><span class="p">()</span><span class="o">.</span><span class="n">lookup_action</span><span class="p">(</span><span class="s1">&#39;highlight-use-pen&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_preset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pen_action</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">active_pen</span><span class="p">)</span> <span class="k">if</span> <span class="n">active_pen</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="o">.</span><span class="n">new_string</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">)))</span>
+
+
+<div class="viewcode-block" id="Scribbler.page_change_action"><a class="viewcode-back" href="../../pympress.html#pympress.scribble.Scribbler.page_change_action">[docs]</a>    <span class="k">def</span> <span class="nf">page_change_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gaction</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change whether we exit or stay in highlighting mode on page changes</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gaction (:class:`~Gio.Action`): the action triggering the call</span>
+<span class="sd">            param (:class:`~GLib.Variant`): the new mode as a string wrapped in a GLib.Variant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_change_exits</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">gaction</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span><span class="o">.</span><span class="n">get_boolean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="s1">&#39;page_change_exits&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_change_exits</span> <span class="k">else</span> <span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">gaction</span><span class="o">.</span><span class="n">change_state</span><span class="p">(</span><span class="n">GLib</span><span class="o">.</span><span class="n">Variant</span><span class="o">.</span><span class="n">new_boolean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_change_exits</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="Scribbler.set_mode"><a class="viewcode-back" href="../../pympress.html#pympress.scribble.Scribbler.set_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gaction</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
@@ -385,6 +414,37 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scribble_drawing</span></div>
 
 
+<div class="viewcode-block" id="Scribbler.key_event"><a class="viewcode-back" href="../../pympress.html#pympress.scribble.Scribbler.key_event">[docs]</a>    <span class="k">def</span> <span class="nf">key_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle key events to activate the eraser while the shortcut is held</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            widget (:class:`~Gtk.Widget`):  the widget which has received the event.</span>
+<span class="sd">            event (:class:`~Gdk.Event`):  the GTK event.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: whether the event was consumed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">scribbling_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_PRESS</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_RELEASE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="o">*</span><span class="n">event</span><span class="o">.</span><span class="n">get_keyval</span><span class="p">()[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">event</span><span class="o">.</span><span class="n">get_state</span><span class="p">())</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_shortcuts</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_PRESS</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_preset</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_preset</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="o">=</span> <span class="s1">&#39;shortcut&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_preset</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_RELEASE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="o">==</span> <span class="s1">&#39;shortcut&#39;</span> \
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_preset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_preset</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
 <div class="viewcode-block" id="Scribbler.toggle_scribble"><a class="viewcode-back" href="../../pympress.html#pympress.scribble.Scribbler.toggle_scribble">[docs]</a>    <span class="k">def</span> <span class="nf">toggle_scribble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Start/stop drawing scribbles.</span>
 
@@ -399,6 +459,12 @@
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_PRESS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">mod</span> <span class="o">&amp;</span> <span class="n">event</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span> <span class="o">==</span> <span class="n">mod</span> <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_modifiers</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_preset</span> \
+                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_preset</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="o">=</span> <span class="s1">&#39;modifier&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_preset</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">scribble_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">scribble_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scribble_width</span><span class="p">,</span> <span class="p">[]))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scribble_drawing</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -406,6 +472,12 @@
         <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">EventType</span><span class="o">.</span><span class="n">BUTTON_RELEASE</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scribble_drawing</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">prerender</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_preset</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="o">==</span> <span class="s1">&#39;modifier&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_preset</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">previous_preset</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toggle_erase_source</span> <span class="o">=</span> <span class="kc">None</span>
+
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span></div>
@@ -798,6 +870,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">scribble_width_selector</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scribble_width</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scribble_color_selector</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="n">target</span> <span class="o">!=</span> <span class="s1">&#39;eraser&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scribble_width_selector</span><span class="o">.</span><span class="n">set_sensitive</span><span class="p">(</span><span class="n">target</span> <span class="o">!=</span> <span class="s1">&#39;eraser&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Re-draw the eraser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scribble_p_da</span><span class="o">.</span><span class="n">queue_draw</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_da</span><span class="o">.</span><span class="n">queue_draw</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="kc">True</span></div>
 
