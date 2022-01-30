@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration file &mdash; Pympress developer documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -58,7 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#themes-on-windows">Themes on Windows</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pympress.html">Module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pympress.html">Pympress package</a></li>
 </ul>
 
 	<hr style="border: 0; height: 0; border-top: 1px solid rgba(0, 0, 0, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.3); width:80%; margin: 10px auto;" />
@@ -89,7 +90,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="configuration-file">
+  <section class="tex2jax_ignore mathjax_ignore" id="configuration-file">
 <h1>Configuration file<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h1>
 <p>Pympress has a number of options available from its configuration file.</p>
 <p>This file is usually located in:</p>
@@ -100,7 +101,7 @@
 <li><p>in the top-level of the pympress install directory for portable installations.</p></li>
 </ul>
 <p>The path to the currently used configuration file can be checked in the <code class="docutils literal notranslate"><span class="pre">Help</span> <span class="pre">&gt;</span> <span class="pre">About</span></code> information window.</p>
-<div class="section" id="shortcuts">
+<section id="shortcuts">
 <h2>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this headline">¶</a></h2>
 <p>The shortcuts are parsed using <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gtk-3.0/functions.html#Gtk.accelerator_parse"><code class="docutils literal notranslate"><span class="pre">Gtk.accelerator_parse()</span></code></a>:</p>
 <blockquote>
@@ -108,67 +109,67 @@
 <p>The parser is fairly liberal and allows lower or upper case, and also abbreviations such as “&lt;Ctl&gt;” and “&lt;Ctrl&gt;”. Key names are parsed using <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gdk-3.0/functions.html#Gdk.keyval_from_name"><code class="docutils literal notranslate"><span class="pre">Gdk.keyval_from_name()</span></code></a>. For character keys the name is not the symbol, but the lowercase name, e.g. one would use “&lt;Ctrl&gt;minus” instead of “&lt;Ctrl&gt;-”.</p>
 </div></blockquote>
 <p>This means that any value in this <a class="reference external" href="https://lazka.github.io/pgi-docs/#Gdk-3.0/constants.html#Gdk.KEY_0">list of key constants</a> is valid (removing the initial <code class="docutils literal notranslate"><span class="pre">Gdk.KEY_</span></code> part). You can verify that this value is parsed correctly from the <code class="docutils literal notranslate"><span class="pre">Help</span> <span class="pre">&gt;</span> <span class="pre">Shortcuts</span></code> information window.</p>
-</div>
-<div class="section" id="layouts">
+</section>
+<section id="layouts">
 <h2>Layouts<a class="headerlink" href="#layouts" title="Permalink to this headline">¶</a></h2>
 <p>The panes (current slide, next slide, notes, annotations, etc.) can be rearranged arbitrarily by setting the entries of the <code class="docutils literal notranslate"><span class="pre">layout</span></code> section in the configuration file.
 Here are a couple examples of layouts, with <code class="docutils literal notranslate"><span class="pre">Cu</span></code> the current slide, <code class="docutils literal notranslate"><span class="pre">No</span></code> the notes half of the slide, <code class="docutils literal notranslate"><span class="pre">Nx</span></code> the next slide:</p>
 <ul>
 <li><p>All-horizontal layout:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+----+----+----+</span>
-<span class="o">|</span> <span class="n">Cu</span> <span class="o">|</span> <span class="n">No</span> <span class="o">|</span> <span class="n">Nx</span> <span class="o">|</span>
-<span class="o">+----+----+----+</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+----+----+----+
+| Cu | No | Nx |
++----+----+----+
 </pre></div>
 </div>
 <p>Setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">,</span> <span class="s2">&quot;notes&quot;</span><span class="p">,</span> <span class="s2">&quot;next&quot;</span><span class="p">],</span> <span class="s2">&quot;proportions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">],</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;resizeable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">}</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>notes = {&quot;children&quot;: [&quot;current&quot;, &quot;notes&quot;, &quot;next&quot;], &quot;proportions&quot;: [0.33, 0.33, 0.33], &quot;orientation&quot;: &quot;horizontal&quot;, &quot;resizeable&quot;: true}
 </pre></div>
 </div>
 </li>
 <li><p>All-vertical layout:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+----+</span>
-<span class="o">|</span> <span class="n">Cu</span> <span class="o">|</span>
-<span class="o">+----+</span>
-<span class="o">|</span> <span class="n">No</span> <span class="o">|</span>
-<span class="o">+----+</span>
-<span class="o">|</span> <span class="n">Nx</span> <span class="o">|</span>
-<span class="o">+----+</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+----+
+| Cu |
++----+
+| No |
++----+
+| Nx |
++----+
 </pre></div>
 </div>
 <p>Setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">,</span> <span class="s2">&quot;notes&quot;</span><span class="p">,</span> <span class="s2">&quot;next&quot;</span><span class="p">],</span> <span class="s2">&quot;proportions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">],</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;resizeable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">}</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>notes = {&quot;children&quot;: [&quot;current&quot;, &quot;notes&quot;, &quot;next&quot;], &quot;proportions&quot;: [0.33, 0.33, 0.33], &quot;orientation&quot;: &quot;vertical&quot;, &quot;resizeable&quot;: true}
 </pre></div>
 </div>
 </li>
 <li><p>Vertical layout with horizontally divided top pane:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+----+----+</span>
-<span class="o">|</span> <span class="n">Cu</span> <span class="o">|</span> <span class="n">No</span> <span class="o">|</span>
-<span class="o">+----+----+</span>
-<span class="o">|</span>    <span class="n">Nx</span>   <span class="o">|</span>
-<span class="o">+---------+</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+----+----+
+| Cu | No |
++----+----+
+|    Nx   |
++---------+
 </pre></div>
 </div>
 <p>Setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
-  			<span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">,</span> <span class="s2">&quot;notes&quot;</span><span class="p">],</span> <span class="s2">&quot;proportions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;resizeable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">},</span>
-  			<span class="s2">&quot;next&quot;</span>
-  		<span class="p">],</span> <span class="s2">&quot;proportions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;resizeable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">}</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>notes = {&quot;children&quot;: [
+  			{&quot;children&quot;: [&quot;current&quot;, &quot;notes&quot;], &quot;proportions&quot;: [0.5, 0.5], &quot;orientation&quot;: &quot;horizontal&quot;, &quot;resizeable&quot;: true},
+  			&quot;next&quot;
+  		], &quot;proportions&quot;: [0.5, 0.5], &quot;orientation&quot;: &quot;vertical&quot;, &quot;resizeable&quot;: true}
 </pre></div>
 </div>
 </li>
 <li><p>Horizontal layout with horizontally divided right pane:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+----+----+</span>
-<span class="o">|</span>    <span class="o">|</span> <span class="n">Nx</span> <span class="o">|</span>
-<span class="o">+</span> <span class="n">Cu</span> <span class="o">+----+</span>
-<span class="o">|</span>    <span class="o">|</span> <span class="n">No</span> <span class="o">|</span>
-<span class="o">+---------+</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>+----+----+
+|    | Nx |
++ Cu +----+
+|    | No |
++---------+
 </pre></div>
 </div>
 <p>Setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
-  			<span class="s2">&quot;current&quot;</span><span class="p">,</span>
-  			<span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;next&quot;</span><span class="p">,</span> <span class="s2">&quot;notes&quot;</span><span class="p">],</span> <span class="s2">&quot;proportions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;resizeable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">}</span>
-  		<span class="p">],</span> <span class="s2">&quot;proportions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;resizeable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">}</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>notes = {&quot;children&quot;: [
+  			&quot;current&quot;,
+  			{&quot;children&quot;: [&quot;next&quot;, &quot;notes&quot;], &quot;proportions&quot;: [0.5, 0.5], &quot;orientation&quot;: &quot;vertical&quot;, &quot;resizeable&quot;: true}
+  		], &quot;proportions&quot;: [0.5, 0.5], &quot;orientation&quot;: &quot;horizontal&quot;, &quot;resizeable&quot;: true}
 </pre></div>
 </div>
 </li>
@@ -185,12 +186,12 @@ Here are a couple examples of layouts, with <code class="docutils literal notran
 <li><p>If you set “resizeable” to <code class="docutils literal notranslate"><span class="pre">false</span></code>, the panes won’t be resizeable dynamically with a handle in the middle</p></li>
 <li><p>“proportions” are normalized, and saved on exit if you resize panes during the execution. If you set them to <code class="docutils literal notranslate"><span class="pre">4</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>, the panes will be <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">/</span> <span class="pre">(4</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">=</span> <span class="pre">20%</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">(4</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">=</span> <span class="pre">100%</span></code>, so the ini will contain something like <code class="docutils literal notranslate"><span class="pre">0.2</span></code> and <code class="docutils literal notranslate"><span class="pre">0.8</span></code> after executing pympress.</p></li>
 </ul>
-</div>
-<div class="section" id="themes-on-windows">
+</section>
+<section id="themes-on-windows">
 <h2>Themes on Windows<a class="headerlink" href="#themes-on-windows" title="Permalink to this headline">¶</a></h2>
 <p>Pympress uses the default Gtk theme of your system, which makes it easy to change on many OSs either globally via your Gtk preferences or <a class="reference external" href="https://www.linuxuprising.com/2019/10/how-to-use-different-gtk-3-theme-for.html">per application</a>.
 Here’s the way to do it on windows:</p>
-<ol>
+<ol class="arabic">
 <li><p>Install a theme</p>
 <p>There are 2 locations, either install the theme for all your gtk apps, e.g. in <code class="docutils literal notranslate"><span class="pre">C:\Users\%USERNAME%\AppData\Local\themes</span></code>, or just for pympress, so in <code class="docutils literal notranslate"><span class="pre">%INSTALLDIR%\share\themes</span></code> (for me that’s <code class="docutils literal notranslate"><span class="pre">C:\Users\%USERNAME%\AppData\Local\Programs\pympress\share\themes</span></code>)</p>
 <p>Basically pick a theme <a class="reference external" href="https://www.gnome-look.org/browse/cat/135/ord/rating/?tag=dark">e.g. from this list of dark themes</a> and make sure to unpack it in the selected directory, it needs at least <code class="docutils literal notranslate"><span class="pre">%THEMENAME%\gtk-3.0\gtk.css</span></code> and <code class="docutils literal notranslate"><span class="pre">%THEMENAME%\index.theme</span></code>, where <code class="docutils literal notranslate"><span class="pre">THEMENAME</span></code> is the name of the theme.</p>
@@ -202,8 +203,8 @@ Here’s the way to do it on windows:</p>
 </li>
 <li><p>Set the theme as default</p>
 <p>Create a <code class="docutils literal notranslate"><span class="pre">settings.ini</span></code> file, either under <code class="docutils literal notranslate"><span class="pre">C:\Users\%USERNAME%\AppData\Local\gtk-3.0</span></code> (global setting) or <code class="docutils literal notranslate"><span class="pre">%INSTALLDIR%\etc\gtk-3.0</span></code> (just pympress) and set the contents:</p>
-<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Settings]</span>
-<span class="na">gtk-theme-name</span><span class="o">=</span><span class="s">THEMENAME</span>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Settings]</span><span class="w"></span>
+<span class="na">gtk-theme-name</span><span class="o">=</span><span class="s">THEMENAME</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
@@ -215,8 +216,8 @@ Here’s the way to do it on windows:</p>
 <li><p><a class="reference external" href="https://stackoverflow.com/a/39041558/1387346">Change GTK+3 look on Windows</a> which contains a list of all interesting directories</p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/a/37060369/1387346">How to get native windows decorations on GTK3 on Windows 7+ and MSYS2</a> which details the process</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
