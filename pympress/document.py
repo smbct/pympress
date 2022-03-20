@@ -996,6 +996,32 @@ class Document(object):
         return (self.nb_pages // 2) if self.notes_after else self.nb_pages
 
 
+
+    def get_next_page_number(self, cur_page, skip_anim = False):
+        """ Get the number of the first page for the next label.
+
+        Args:
+            skip_anim (`boolean`): go to the last page of the next label to skip the animations
+
+        Returns:
+            `int`: the number of the page
+        """
+
+        cur_label = self.page_labels[cur_page]
+
+        next_page = cur_page
+        while next_page+1 < self.pages_number() and self.page_labels[next_page] == cur_label:
+            next_page += 1
+
+
+        if skip_anim:
+            new_label = self.page_labels[next_page]
+            stop = False
+            while next_page+1 < self.pages_number() and self.page_labels[next_page+1] == new_label:
+                next_page += 1
+
+        return next_page
+
     def has_labels(self):
         """ Return whether this document has useful labels.
 

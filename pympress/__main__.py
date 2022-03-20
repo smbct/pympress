@@ -100,6 +100,7 @@ from pympress import app
 def main(argv = sys.argv[:]):
     """ Entry point of pympress. Parse command line arguments, instantiate the UI, and start the main loop.
     """
+
     app.Pympress().run(argv)
 
 

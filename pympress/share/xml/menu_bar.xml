@@ -245,6 +245,10 @@
 			<attribute name="label" translatable="yes">Edit layout</attribute>
 			<attribute name="action">app.edit-layout</attribute>
 		</item>
+		<item>
+			<attribute name="label" translatable="yes">Next slides options</attribute>
+			<attribute name="action">app.next-options</attribute>
+		</item>
 	</submenu>
 
 	<submenu>

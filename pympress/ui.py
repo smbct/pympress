@@ -115,6 +115,15 @@ class UI(builder.Builder):
     #: number of page currently displayed in Presenter window's miniatures
     preview_page = -1
 
+    #: number of the next pages to show in advance
+    next_pages = []
+
+    #: True to skip the animations and show the next label
+    skip_next_slides = False
+
+    #: option for skipping animations
+    skipping_slides_option = 0
+
     #: track whether we blank the screen
     blanked = False
 
@@ -219,6 +228,7 @@ class UI(builder.Builder):
         self.setup_actions({
             'quit':                  dict(activate=self.app.quit),
             'about':                 dict(activate=self.menu_about),
+            'next-options':          dict(activate=self.menu_next_options),
             'big-buttons':           dict(activate=self.switch_bigbuttons, state=self.show_bigbuttons),
             'show-shortcuts':        dict(activate=self.show_shortcuts),
             'content-fullscreen':    dict(activate=self.switch_fullscreen, state=c_full),
@@ -654,6 +664,71 @@ class UI(builder.Builder):
         about.destroy()
 
 
+    def menu_next_options(self, *args):
+
+        """ Display the next slides options dialog.
+
+        Handles clicks on the "next slides" menu.
+        """
+
+        # class variable storing the options:
+        # self.skip_next_slides
+        # self.skipping_slides_option
+
+        next_dialog = Gtk.Dialog(transient_for = self.p_win)
+
+        next_dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        button_ok = next_dialog.add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+
+        next_dialog.set_default_size(150, 100)
+
+        box = next_dialog.get_content_area()
+
+        # skip animations ?
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+
+        label = Gtk.Label(label="Skip animations: ")
+        hbox.pack_start(label, True, True, 0)
+
+        checkbox = Gtk.CheckButton()
+        checkbox.set_active(self.skip_next_slides)
+
+        if self.doc.doc == None or self.doc.has_labels() == False:
+            checkbox.set_sensitive(False)
+
+        hbox.pack_start(checkbox, True, True, 0)
+
+        box.pack_start(hbox, True, True, 0)
+
+
+        # skipping mode: first slide/last slide of the next label
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+
+        label = Gtk.Label(label="Skipping mode: ")
+        hbox.pack_start(label, True, True, 0)
+
+        mode_combo = Gtk.ComboBoxText()
+        mode_combo.append_text('first slide')
+        mode_combo.append_text('last slide')
+        mode_combo.set_active(self.skipping_slides_option)
+
+        hbox.pack_start(mode_combo, True, True, 0)
+
+        box.pack_start(hbox, True, True, 0)
+
+        next_dialog.show_all()
+
+        response = next_dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            # update the parameters values
+            self.skip_next_slides = checkbox.get_active()
+            self.skipping_slides_option = mode_combo.get_active()
+
+            self.do_page_change(unpause=True, autoplay=self.autoplay)
+
+        next_dialog.destroy()
+
     ##############################################################################
     ############################ Document manangement ############################
     ##############################################################################
@@ -997,6 +1072,7 @@ class UI(builder.Builder):
             gaction (:class:`~Gio.Action`): the action triggering the call
             param (:class:`~GLib.Variant`): the parameter as a variant, or None
         """
+
         if not self.page_number.editing and self.talk_time.paused:
             self.talk_time.unpause()
         else:
@@ -1088,7 +1164,30 @@ class UI(builder.Builder):
 
         page_content = self.doc.page(self.current_page)
         page_preview = self.doc.page(self.preview_page)
-        pages_next = [self.doc.page(self.preview_page + n + 1) for n in range(self.next_frames_count)]
+
+
+        # pages_next = [self.doc.page(self.preview_page + n + 1) for n in range(self.next_frames_count)]
+
+        # update the number of the next pages
+        if self.skip_next_slides and self.doc.doc != None:
+            if self.skipping_slides_option == 1:
+                to_last_slide = True
+            else:
+                to_last_slide = False
+
+            self.next_pages = [-1 for i in range(self.next_frames_count)]
+
+            for i in range(self.next_frames_count):
+                if i == 0:
+                    self.next_pages[i] = self.doc.get_next_page_number(self.current_page, to_last_slide)
+                else:
+                    self.next_pages[i] = self.doc.get_next_page_number(self.next_pages[i-1], to_last_slide)
+
+        else:
+            self.next_pages = [self.current_page+n+1 for n in range(self.next_frames_count)]
+
+        pages_next = [self.doc.page(page) for page in self.next_pages]
+
         page_notes = self.doc.notes_page(self.preview_page)
 
         # Aspect ratios and queue redraws
@@ -1110,6 +1209,8 @@ class UI(builder.Builder):
             self.scribbler.scribble_p_frame.set_property('ratio', content_pr)
             self.scribbler.scribble_p_frame.queue_draw()
 
+        pages_next = [self.doc.page(0) for _ in range(self.next_frames_count)]
+
         next_pr = preview_pr  # A default page ratio
         for page, frame, da in zip(pages_next, self.p_frames_next, self.p_das_next):
             if page is not None:
@@ -1122,9 +1223,16 @@ class UI(builder.Builder):
         # Update display -- needs to be different ?
         self.page_number.update_page_numbers(self.preview_page, page_preview.label())
 
+        # print(self.doc.page_labels)
+        # print(len(self.doc.page_labels))
+
         # Prerender the 4 next pages and the 2 previous ones
         page_max = min(self.doc.pages_number(), self.preview_page + self.next_frames_count + 4)
         page_min = max(0, self.preview_page - 2)
+
+        # account for the display option of the next slides
+        page_max = max(page_max, max(self.next_pages)+4)
+
         for p in list(range(self.preview_page + 1, page_max)) + list(range(self.preview_page, page_min, -1)):
             self.cache.prerender(p)
 
@@ -1174,7 +1282,24 @@ class UI(builder.Builder):
             page = self.doc.notes_page(self.preview_page)
         elif widget in self.p_das_next:
             offset = 1 + int(widget.get_name()[len('p_da_next'):])
-            page = self.doc.page(self.preview_page + offset)
+
+            # page = self.doc.page(self.preview_page + offset)
+
+            # page = self.doc.page(self.doc.get_next_page_number(self.preview_page))
+
+            # avoid update issue on the number of next slides
+            if offset-1 < 0 or offset-1 >= len(self.next_pages):
+                return
+
+            # do not draw the same slide multiple time
+            if self.skip_next_slides == True and offset-1 > 0 and self.next_pages[offset-2] == self.next_pages[offset-1]:
+                return
+
+            if self.current_page == self.doc.pages_number()-1:
+                return
+
+            page = self.doc.page(self.next_pages[offset-1])
+
             # No next page: just return so we won't draw anything
             if page is None:
                 return
